@@ -1,5 +1,6 @@
 use std::{
   env,
+  fmt::Write as _,
   fs::File,
   io::{self, Read},
 };
@@ -12,18 +13,26 @@ use crate::colors::COLORS;
 #[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_username_and_hostname(utsname: &UtsName) -> String {
   let username = env::var("USER").unwrap_or_else(|_| "unknown_user".to_owned());
-  let hostname = utsname
-    .nodename()
-    .to_str()
-    .unwrap_or("unknown_host")
-    .to_owned();
-  format!(
-    "{yellow}{username}{red}@{green}{hostname}{reset}",
-    yellow = COLORS.yellow,
-    red = COLORS.red,
-    green = COLORS.green,
-    reset = COLORS.reset,
-  )
+  let hostname = utsname.nodename().to_str().unwrap_or("unknown_host");
+
+  let capacity = COLORS.yellow.len()
+    + username.len()
+    + COLORS.red.len()
+    + 1
+    + COLORS.green.len()
+    + hostname.len()
+    + COLORS.reset.len();
+  let mut result = String::with_capacity(capacity);
+
+  result.push_str(COLORS.yellow);
+  result.push_str(&username);
+  result.push_str(COLORS.red);
+  result.push('@');
+  result.push_str(COLORS.green);
+  result.push_str(hostname);
+  result.push_str(COLORS.reset);
+
+  result
 }
 
 #[must_use]
@@ -31,8 +40,13 @@ pub fn get_username_and_hostname(utsname: &UtsName) -> String {
 pub fn get_shell() -> String {
   let shell_path =
     env::var("SHELL").unwrap_or_else(|_| "unknown_shell".to_owned());
-  let shell_name = shell_path.rsplit('/').next().unwrap_or("unknown_shell");
-  shell_name.to_owned()
+
+  // Find last '/' and get the part after it, avoiding allocation
+  shell_path
+    .rsplit('/')
+    .next()
+    .unwrap_or("unknown_shell")
+    .to_owned()
 }
 
 #[cfg_attr(feature = "hotpath", hotpath::measure)]
@@ -49,11 +63,16 @@ pub fn get_root_disk_usage() -> Result<String, io::Error> {
   let used_size = used_size as f64 / (1024.0 * 1024.0 * 1024.0);
   let usage = (used_size / total_size) * 100.0;
 
-  Ok(format!(
+  let mut result = String::with_capacity(64);
+  write!(
+    result,
     "{used_size:.2} GiB / {total_size:.2} GiB ({cyan}{usage:.0}%{reset})",
     cyan = COLORS.cyan,
     reset = COLORS.reset,
-  ))
+  )
+  .unwrap();
+
+  Ok(result)
 }
 
 #[cfg_attr(feature = "hotpath", hotpath::measure)]
@@ -70,7 +89,7 @@ pub fn get_memory_usage() -> Result<String, io::Error> {
       let mut split = line.split_whitespace();
       match split.next().unwrap_or_default() {
         "MemTotal:" => {
-          total_memory_kb = split.next().unwrap_or("0").parse().unwrap_or(0.0)
+          total_memory_kb = split.next().unwrap_or("0").parse().unwrap_or(0.0);
         },
         "MemAvailable:" => {
           available_memory_kb =
@@ -92,10 +111,15 @@ pub fn get_memory_usage() -> Result<String, io::Error> {
   let (used_memory, total_memory) = parse_memory_info()?;
   let percentage_used = (used_memory / total_memory * 100.0).round() as u64;
 
-  Ok(format!(
+  let mut result = String::with_capacity(64);
+  write!(
+    result,
     "{used_memory:.2} GiB / {total_memory:.2} GiB \
      ({cyan}{percentage_used}%{reset})",
     cyan = COLORS.cyan,
     reset = COLORS.reset,
-  ))
+  )
+  .unwrap();
+
+  Ok(result)
 }
