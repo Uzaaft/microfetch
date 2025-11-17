@@ -37,7 +37,7 @@ impl Colors {
 }
 
 pub static COLORS: LazyLock<Colors> = LazyLock::new(|| {
-  // check for NO_COLOR once at startup
+  // Check for NO_COLOR once at startup
   let is_no_color = env::var("NO_COLOR").is_ok();
   Colors::new(is_no_color)
 });
@@ -45,14 +45,37 @@ pub static COLORS: LazyLock<Colors> = LazyLock::new(|| {
 #[must_use]
 #[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn print_dots() -> String {
-  format!(
-    "{}  {}  {}  {}  {}  {}  {}",
-    COLORS.blue,
-    COLORS.cyan,
-    COLORS.green,
-    COLORS.yellow,
-    COLORS.red,
-    COLORS.magenta,
-    COLORS.reset,
-  )
+  // Pre-calculate capacity: 6 color codes + "  " (glyph + 2 spaces) per color
+  const GLYPH: &str = "";
+  let capacity = COLORS.blue.len()
+    + COLORS.cyan.len()
+    + COLORS.green.len()
+    + COLORS.yellow.len()
+    + COLORS.red.len()
+    + COLORS.magenta.len()
+    + COLORS.reset.len()
+    + (GLYPH.len() + 2) * 6;
+
+  let mut result = String::with_capacity(capacity);
+  result.push_str(COLORS.blue);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.cyan);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.green);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.yellow);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.red);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.magenta);
+  result.push_str(GLYPH);
+  result.push_str("  ");
+  result.push_str(COLORS.reset);
+
+  result
 }
