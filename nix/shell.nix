@@ -4,6 +4,7 @@
   rustfmt,
   clippy,
   cargo,
+  taplo,
   rustc,
   rustPlatform,
   gnuplot,
@@ -16,8 +17,9 @@ mkShell {
     rustc
 
     rust-analyzer-unwrapped
-    rustfmt
+    (rustfmt.override {asNightly = true;})
     clippy
+    taplo
 
     gnuplot # For Criterion.rs plots
   ];
