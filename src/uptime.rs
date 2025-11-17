@@ -1,5 +1,6 @@
 use std::{io, mem::MaybeUninit};
 
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_current() -> Result<String, io::Error> {
   let uptime_seconds = {
     let mut info = MaybeUninit::uninit();

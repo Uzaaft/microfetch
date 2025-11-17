@@ -43,6 +43,7 @@ pub static COLORS: LazyLock<Colors> = LazyLock::new(|| {
 });
 
 #[must_use]
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn print_dots() -> String {
   format!(
     "{}  {}  {}  {}  {}  {}  {}",

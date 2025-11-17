@@ -1,4 +1,5 @@
 #[must_use]
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_desktop_info() -> String {
   // Retrieve the environment variables and handle Result types
   let desktop_env = std::env::var("XDG_CURRENT_DESKTOP");

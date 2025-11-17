@@ -6,6 +6,7 @@ use std::{
 use nix::sys::utsname::UtsName;
 
 #[must_use]
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_system_info(utsname: &UtsName) -> String {
   format!(
     "{} {} ({})",
@@ -15,6 +16,7 @@ pub fn get_system_info(utsname: &UtsName) -> String {
   )
 }
 
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_os_pretty_name() -> Result<String, io::Error> {
   let file = File::open("/etc/os-release")?;
   let reader = BufReader::new(file);

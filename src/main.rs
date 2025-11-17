@@ -19,6 +19,7 @@ use crate::{
   uptime::get_current,
 };
 
+#[cfg_attr(feature = "hotpath", hotpath::main)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   if Some("--version") == std::env::args().nth(1).as_deref() {
     println!("Microfetch {}", env!("CARGO_PKG_VERSION"));
@@ -56,6 +57,7 @@ struct Fields {
   colors:         String,
 }
 
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 fn print_system_info(
   fields: &Fields,
 ) -> Result<(), Box<dyn std::error::Error>> {

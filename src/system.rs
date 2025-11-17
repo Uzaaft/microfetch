@@ -9,6 +9,7 @@ use nix::sys::{statvfs::statvfs, utsname::UtsName};
 use crate::colors::COLORS;
 
 #[must_use]
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_username_and_hostname(utsname: &UtsName) -> String {
   let username = env::var("USER").unwrap_or_else(|_| "unknown_user".to_owned());
   let hostname = utsname
@@ -26,6 +27,7 @@ pub fn get_username_and_hostname(utsname: &UtsName) -> String {
 }
 
 #[must_use]
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_shell() -> String {
   let shell_path =
     env::var("SHELL").unwrap_or_else(|_| "unknown_shell".to_owned());
@@ -33,6 +35,7 @@ pub fn get_shell() -> String {
   shell_name.to_owned()
 }
 
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_root_disk_usage() -> Result<String, io::Error> {
   let vfs = statvfs("/")?;
   let block_size = vfs.block_size() as u64;
@@ -53,7 +56,9 @@ pub fn get_root_disk_usage() -> Result<String, io::Error> {
   ))
 }
 
+#[cfg_attr(feature = "hotpath", hotpath::measure)]
 pub fn get_memory_usage() -> Result<String, io::Error> {
+  #[cfg_attr(feature = "hotpath", hotpath::measure)]
   fn parse_memory_info() -> Result<(f64, f64), io::Error> {
     let mut total_memory_kb = 0.0;
     let mut available_memory_kb = 0.0;
