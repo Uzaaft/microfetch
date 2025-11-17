@@ -1,17 +1,34 @@
+<!-- markdownlint-disable MD013 MD033 MD041 -->
+
 <div align="center">
     <img src="https://deps.rs/repo/github/notashelf/microfetch/status.svg" alt="https://deps.rs/repo/github/notashelf/microfetch">
-    <!-- <img src="https://img.shields.io/github/v/release/notashelf/microfetch?display_name=tag&color=DEA584"> -->
-    <img src="https://img.shields.io/github/stars/notashelf/microfetch?label=stars&color=DEA584">
+    <img src="https://img.shields.io/github/stars/notashelf/microfetch?label=stars&color=DEA584" alt="stars">
 </div>
 
-<h1 align="center">Microfetch</h1>
+<div id="doc-begin" align="center">
+  <h1 id="header">
+    Microfetch
+  </h1>
+  <p>
+    Microscopic fetch tool in Rust, for NixOS systems, with special emphasis on speed
+  </p>
+  <br/>
+  <a href="#synopsis">Synopsis</a><br/>
+  <a href="#features">Features</a> | <a href="#motivation">Motivation</a><br/>
+  <a href="#installation">Installation</a>
+  <br/>
+</div>
 
-Stupidly simple, laughably fast fetch tool. Written in Rust for speed and ease
-of maintainability. Runs in a _fraction of a millisecond_ and displays _most_ of
-the nonsense you'd see posted on r/unixporn or other internet communities. Aims
-to replace [fastfetch](https://github.com/fastfetch-cli/fastfetch) on my
-personal system, but [probably not yours](#customizing). Though, you are more
-than welcome to use it on your system: it's pretty [fast](#benchmarks)...
+## Synopsis
+
+[fastfetch]: https://github.com/fastfetch-cli/fastfetch
+
+Stupidly small and simple, laughably fast and pretty fetch tool. Written in Rust
+for speed and ease of maintainability. Runs in a _fraction of a millisecond_ and
+displays _most_ of the nonsense you'd see posted on r/unixporn or other internet
+communities. Aims to replace [fastfetch] on my personal system, but
+[probably not yours](#customizing). Though, you are more than welcome to use it
+on your system: it is pretty _[fast](#benchmarks)_...
 
 <p align="center">
   <img
@@ -26,6 +43,7 @@ than welcome to use it on your system: it's pretty [fast](#benchmarks)...
 - Fast
 - Really fast
 - Minimal dependencies
+- Tiny binary (~410kb)
 - Actually really fast
 - Cool NixOS logo (other, inferior, distros are not supported)
 - Reliable detection of following info:
@@ -44,39 +62,64 @@ than welcome to use it on your system: it's pretty [fast](#benchmarks)...
 
 ## Motivation
 
-Fastfetch, as its name indicates, a very fast fetch tool written in C, however,
-I am not interested in any of its additional features, such as customization,
-and I very much dislike the defaults. Microfetch is my response to this problem,
-a _very fast_ fetch tool that you would normally write in Bash and put in your
-`~/.bashrc` but actually _really_ fast because it opts-out of all customization
-options provided by Fastfetch, and is written in Rust. Why? Because I can, and
-because I prefer Rust for "structured" Bash scripts.
+Fastfetch, as its name probably hinted, is a very fast fetch tool written in C.
+However, I am not interested in _any_ of its additional features, and I'm not
+interested in its configuration options. Sure I can _configure_ it when I
+dislike the defaults, but how often would I really change the configuration...
 
-I cannot re-iterate it enough, Microfetch is _annoyingly fast_.
+Microfetch is my response to this problem. It is an _even faster_ fetch tool
+that I would've written in Bash and put in my `~/.bashrc` but is _actually_
+incredibly fast because it opts out of all the customization options provided by
+tools such as Fastfetch. Ultimately, it's a small, opinionated binary with a
+nice size that doesn't bother me, and incredible speed. Customization? No thank
+you. I cannot re-iterate it enough, Microfetch is _annoyingly fast_.
+
+The project is written in Rust, which comes at the cost of "bloated" dependency
+trees and the increased build times, but we make an extended effort to keep the
+dependencies minimal and build times managable. The latter is also very easily
+mitigated with Nix's binary cache systems. Since Microfetch is already in
+Nixpkgs, you are recommended to use it to utilize the binary cache properly. The
+usage of Rust _is_ nice, however, since it provides us with incredible tooling
+and a very powerful language that allows for Microfetch to be as fast as
+possible. Sure C could've been used here as well, but do you think I hate
+myself? [^1]
+
+[^1]: Okay, maybe a little bit. One of the future goals of Microfetch is to
+    defer to inline Assembly for the costliest functions, but that's for a
+    future date and until I do that I can pretend to be sane.
 
 ## Benchmarks
 
-The performance may be sometimes influenced by hardware-specific race
-conditions, or even your kernel configuration meaning it may (at times) depend
-on your hardware. However, the overall trend appears to be less than 1.3ms on
-any modern (2015 and after) CPU that I own. Below are the benchmarks with
-Hyperfine on my desktop system. Please note that those benchmarks will not be
-always kept up to date, but I will try to update the numbers as I make
-Microfetch faster.
+Below are the benchmarks that I've used to back up my claims of Microfetch's
+speed. It is fast, it is _very_ fast and that is the point of its existence. It
+_could_ be faster, and it will be. Eventually.
 
-| Command      |    Mean [ms] | Min [ms] | Max [ms] |       Relative | Written by raf? |
-| :----------- | -----------: | -------: | -------: | -------------: | --------------: |
-| `microfetch` |    1.0 ± 0.1 |      0.9 |      1.7 |           1.00 |             yes |
-| `fastfetch`  |   48.6 ± 1.6 |     45.8 |     61.3 |   46.65 ± 4.75 |              no |
-| `pfetch`     |  206.0 ± 4.5 |    198.0 |    241.4 | 197.50 ± 19.53 |              no |
-| `neofetch`   | 689.1 ± 29.1 |    637.7 |    811.2 | 660.79 ± 69.56 |              no |
+At this point in time, the performance may be sometimes influenced by
+hardware-specific race conditions or even your kernel configuration. Which means
+that Microfetch's speed may (at times) depend on your hardware setup. However,
+even with the worst possible hardware I could find in my house, I've achieved a
+nice less-than-1ms invocation time. Which is pretty good. While Microfetch
+_could_ be made faster, we're in the territory of environmental bottlenecks
+given how little Microfetch actually allocates.
 
-As far as I'm concerned, Microfetch is significantly faster than every other
-fetch tool that I have tried. The only downsides of using Rust for the project
-(in exchange for speed and maintainability) is the slightly "bloated" dependency
-trees, and the increased build times. The latter is very easily mitigated with
-Nix's binary cache. Since Microfetch is already in Nixpkgs, you are recommended
-to use it to utilize the binary cache properly
+Below are the actual benchmarks with Hyperfine measured on my Desktop system.
+The benchmarks were performed under medium system load, and may not be the same
+on your system. Please _also_ note that those benchmarks will not be always kept
+up to date, but I will try to update the numbers as I make Microfetch faster.
+
+| Command      |         Mean [µs] | Min [µs] | Max [µs] |       Relative | Written by raf? |
+| :----------- | ----------------: | -------: | -------: | -------------: | --------------: |
+| `microfetch` |      604.4 ± 64.2 |    516.0 |   1184.6 |           1.00 |             Yes |
+| `fastfetch`  | 140836.6 ± 1258.6 | 139204.7 | 143299.4 | 233.00 ± 24.82 |              No |
+| `pfetch`     | 177036.6 ± 1614.3 | 174199.3 | 180830.2 | 292.89 ± 31.20 |              No |
+| `neofetch`   | 406309.9 ± 1810.0 | 402757.3 | 409526.3 | 672.20 ± 71.40 |              No |
+| `nitch`      | 127743.7 ± 1391.7 | 123933.5 | 130451.2 | 211.34 ± 22.55 |              No |
+| `macchina`   |   13603.7 ± 339.7 |  12642.9 |  14701.4 |   22.51 ± 2.45 |              No |
+
+The point stands that Microfetch is significantly faster than every other fetch
+tool I have tried. This is to be expected, of course, since Microfetch is
+designed _explicitly_ for speed and makes some tradeoffs to achieve it's
+signature speed.
 
 ### Benchmarking Individual Functions
 
@@ -86,6 +129,32 @@ to use it to utilize the binary cache properly
 To benchmark individual functions, [Criterion.rs] is used. See Criterion's
 [Getting Started Guide] for details or just run `cargo bench` to benchmark all
 features of Microfetch.
+
+### Profiling Allocations and Timing
+
+[Hotpath]: https://github.com/pawurb/hotpath
+
+Microfetch uses [Hotpath] for profiling function execution timing and heap
+allocations. This helps identify performance bottlenecks and track optimization
+progress. It is so effective that thanks to Hotpath, Microfetch has seen a 60%
+reduction in the number of allocations.
+
+To profile timing:
+
+```bash
+HOTPATH_JSON=true cargo run --features=hotpath
+```
+
+To profile allocations:
+
+```bash
+HOTPATH_JSON=true cargo run --features=hotpath,hotpath-alloc-count-total
+```
+
+The JSON output can be analyzed with the `hotpath` CLI tool for detailed
+performance metrics. On pull requests, GitHub Actions automatically profiles
+both timing and allocations, posting comparison comments to help catch
+performance regressions.
 
 ## Installation
 
