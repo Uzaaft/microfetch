@@ -82,11 +82,14 @@ Nixpkgs, you are recommended to use it to utilize the binary cache properly. The
 usage of Rust _is_ nice, however, since it provides us with incredible tooling
 and a very powerful language that allows for Microfetch to be as fast as
 possible. Sure C could've been used here as well, but do you think I hate
-myself? [^1]
+myself?
 
-[^1]: Okay, maybe a little bit. One of the future goals of Microfetch is to
-    defer to inline Assembly for the costliest functions, but that's for a
-    future date and until I do that I can pretend to be sane.
+> [!IMPORTANT]
+> **Update as of November 30th, 2025**:
+>
+> Microfetch now inlines handwritten assembly for even better performance. I
+> know I previously said I do not hate myself but I'm beginning to suspect this
+> is no longer the case. Enjoy the performance benefits!
 
 ## Benchmarks
 
