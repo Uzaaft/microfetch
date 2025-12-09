@@ -96,12 +96,10 @@ fn print_system_info(
     {blue}   ▟█▛{cyan}▗█▖       {cyan}▟█▛         {cyan}  {blue}Desktop{reset}       {desktop}
     {blue}  ▝█▛  {cyan}██▖{blue}▗▄▄▄▄▄▄▄▄▄▄▄      {cyan}  {blue}Memory{reset}        {memory_usage}
     {blue}   ▝  {cyan}▟█▜█▖{blue}▀▀▀▀▀██▛▀▀▘      {cyan}󱥎  {blue}Storage (/){reset}   {storage}
-    {cyan}     ▟█▘ ▜█▖    {blue}▝█▛         {cyan}  {blue}Colors{reset}        {colors}\n"
+    {cyan}     ▟█▘ ▜█▖    {blue}▝█▛         {cyan}  {blue}Colors{reset}        {colors}\n\n"
   )?;
 
-  #[allow(clippy::cast_possible_truncation)]
   let len = cursor.position() as usize;
-
   // Direct syscall to avoid stdout buffering allocation
   let written = unsafe { libc::write(libc::STDOUT_FILENO, buf.as_ptr().cast(), len) };
   if written < 0 {
